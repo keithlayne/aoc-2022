@@ -1,6 +1,6 @@
 drop table if exists day2input, day2part1, day2part2;
 create table day2input (a char, b char);
-\copy day2input from 'input.txt' delimiter ' ' csv;
+\copy day2input from program 'cat $(git rev-parse --show-toplevel)/02/input.txt' delimiter ' ' csv;
 
 create table day2part1 (a char, b char, score int);
 insert into day2part1 (a, b, score) values ('A', 'X', 4), ('A', 'Y', 8), ('A', 'Z', 3), ('B', 'X', 1), ('B', 'Y', 5), ('B', 'Z', 9), ('C', 'X', 7), ('C', 'Y', 2), ('C', 'Z', 6);
