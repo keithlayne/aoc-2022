@@ -7,7 +7,7 @@ create schema day02;
 set search_path to day02, public;
 
 create table input (line text);
-\copy input from program 'cat $(git rev-parse --show-toplevel)/02/input.txt';
+copy input from '/aoc/02/input.txt';
 
 create table part1 (line text, score int);
 insert into part1 (line, score) values 

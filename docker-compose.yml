@@ -5,11 +5,13 @@ volumes:
 
 services:
   db:
-    image: postgres:alpine
+    image: postgres
     ports:
       - 15432:5432
     environment:
+      PGUSER: postgres
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PASSWORD: super-sekret
     volumes:
       - pg-data:/var/lib/postgresql/data
+      - .:/aoc

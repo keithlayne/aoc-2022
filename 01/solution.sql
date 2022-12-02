@@ -8,7 +8,7 @@ set search_path to day01, public;
 
 drop table if exists input, data;
 create table input (raw text);
-\copy input (raw) from program 'sed "/./{:a;N;s/\n\(.\)/ \1/;ta}" $(git rev-parse --show-toplevel)/01/input.txt' where raw != '';
+copy input (raw) from program 'sed "/./{:a;N;s/\n\(.\)/ \1/;ta}" /aoc/01/input.txt' where raw != '';
 create table data as select (select sum(val::int) from regexp_split_to_table(raw,'\s+') val) calories from input;
 
 \timing on
