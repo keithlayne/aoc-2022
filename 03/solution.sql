@@ -9,6 +9,11 @@ set search_path to day03, public;
 create table input (line text);
 copy input from '/aoc/03/input.txt';
 
+create table priorities as (
+  select string_to_table('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', null) val,
+  generate_series(1, 52) priority
+);
+
 \timing on
 \unset QUIET
 
@@ -20,7 +25,7 @@ with matches as (
     intersect
     select string_to_table(substr(line, char_length(line)/2 + 1), null) val
   ) from input
-) select sum(case when ascii(val) > 96 then ascii(val) - 96 else ascii(val) - 38 end) "Part 1" from matches;
+) select sum(priority) "Part 1" from matches join priorities using (val);
 
 with groups as (
   select line, ((row_number() over()) - 1) / 3 as grp from input
@@ -34,4 +39,4 @@ with groups as (
     intersect
     select string_to_table(lines[3], null) val
   ) from arrays
-) select sum(case when ascii(val) > 96 then ascii(val) - 96 else ascii(val) - 38 end) "Part 2" from matches;
+) select sum(priority) "Part 2" from matches join priorities using (val);
