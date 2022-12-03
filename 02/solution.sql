@@ -12,12 +12,19 @@ copy input from '/aoc/02/input.txt';
 \timing on
 \unset QUIET
 
+\echo
 \echo Day 02
 
-with part1(line, score) as (
-  values ('A X', 4), ('A Y', 8), ('A Z', 3), ('B X', 1), ('B Y', 5), ('B Z', 9), ('C X', 7), ('C Y', 2), ('C Z', 6)
-) select sum(score) "Part 1" from input join part1 using (line);
-
-with part2(line, score) as (
-  values ('A X', 3), ('A Y', 4), ('A Z', 8), ('B X', 1), ('B Y', 5), ('B Z', 9), ('C X', 2), ('C Y', 6), ('C Z', 7)
-) select sum(score) "Part 2" from input join part2 using (line);
+with part1 (line, score) as (
+  values ('A X', 4), ('A Y', 8), ('A Z', 3),
+         ('B X', 1), ('B Y', 5), ('B Z', 9),
+         ('C X', 7), ('C Y', 2), ('C Z', 6)
+), part2 (line, score) as (
+  values ('A X', 3), ('A Y', 4), ('A Z', 8),
+         ('B X', 1), ('B Y', 5), ('B Z', 9),
+         ('C X', 2), ('C Y', 6), ('C Z', 7)
+) select (
+    select sum(score) from input join part1 using (line)
+  ) "Part 1", (
+    select sum(score) from input join part2 using (line)
+  ) "Part 2";
