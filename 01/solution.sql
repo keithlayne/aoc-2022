@@ -15,14 +15,14 @@ copy input from '/aoc/01/input.txt';
 \echo
 \echo Day 01
 
-with data as (
-  select calories, rank() over (order by calories desc) from (
-    select sum(line::int) calories from (
-      select line, count(1) filter (where line = '') over (rows unbounded preceding) grp from input
-    ) grouped where line != '' group by grp
-  ) ranked
+with grouped as (
+  select line, count(1) filter (where line = '') over (rows unbounded preceding) grp from input
+), summed as (
+  select sum(line::int) calories from grouped where line != '' group by grp
+), ranked as (
+  select calories, rank() over (order by calories desc) from summed
 ) select (
-    select max(calories) from data
+    select max(calories) from summed
   ) "Part 1", (
-    select sum(calories) filter (where rank <= 3) from data
+    select sum(calories) filter (where rank <= 3) from ranked
   ) "Part 2";

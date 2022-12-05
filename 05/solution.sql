@@ -15,22 +15,17 @@ copy input (line) from '/aoc/05/input.txt';
 \echo
 \echo Day 05
 
-with recursive moves (move, cnt, src, dest) as (
-  select num, m[1]::int, m[2]::int, m[3]::int from (
-    select num, regexp_match(line, '(\d+).*(\d+).*(\d+)') m
-    from input
-    where regexp_like(line, 'move (\d+) from (\d+) to (\d+)')
-  ) match
+with recursive moves_raw as (
+  select num, regexp_match(line, '(\d+).*(\d+).*(\d+)')::int[] m
+  from input where regexp_like(line, 'move (\d+) from (\d+) to (\d+)')
+), moves (move, cnt, src, dest) as (
+  select num, m[1], m[2], m[3] from moves_raw
+), stacks_raw as (
+  select num, generate_series(1, 100) col, string_to_table(line, null) crate
+  from input where regexp_like(line, '[A-Z]')
 ), stacks (crates, stack) as (
   select string_agg(crate, '' order by num desc), ((col - 2) / 4) + 1
-  from (
-    select
-      num,
-      generate_series(1, 100) col,
-      string_to_table(line, null) crate
-    from input where regexp_like(line, '[A-Z]')
-  ) parsed where regexp_like(crate, '[A-Z]')
-  group by col
+  from stacks_raw where regexp_like(crate, '[A-Z]') group by col
 ), part1 (move, crates) as (
   select (select min(move) from moves), array_agg(crates order by stack) from stacks
   union
