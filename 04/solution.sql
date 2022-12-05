@@ -12,6 +12,7 @@ copy input from program 'sed -r "s/,/|/;s/([0-9]+)-([0-9]+)/[\1,\2]/g" /aoc/04/i
 \timing on
 \unset QUIET
 
+\echo
 \echo Day 04
 
 select (
