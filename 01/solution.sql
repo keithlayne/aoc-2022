@@ -21,8 +21,7 @@ with grouped as (
   select sum(line::int) calories from grouped where line != '' group by grp
 ), ranked as (
   select calories, rank() over (order by calories desc) from summed
-) select (
-    select max(calories) from summed
-  ) "Part 1", (
-    select sum(calories) filter (where rank <= 3) from ranked
-  ) "Part 2";
+) select
+    max(calories) "Part 1",
+    sum(calories) filter (where rank <= 3) "Part 2"
+  from ranked;

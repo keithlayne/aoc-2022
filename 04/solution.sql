@@ -19,8 +19,7 @@ with raw as (
   select regexp_match(line, '(\d+)-(\d+),(\d+)-(\d+)')::int[] m from input
 ), data (a, b) as (
   select int4range(m[1], m[2], '[]'), int4range(m[3], m[4], '[]') from raw
-) select (
-    select count(1) from data where a @> b or a <@ b
-  ) "Part 1", (
-    select count(1) from data where a && b
-  ) "Part 2";
+) select
+    count(1) filter (where a @> b or a <@ b) "Part 1",
+    count(1) filter (where a && b) "Part 2"
+  from data;

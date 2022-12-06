@@ -25,7 +25,7 @@ with priorities as (
     select string_to_table(substr(line, char_length(line)/2 + 1), null) val
   ) from input
 ), groups as (
-  select line, ((row_number() over()) - 1) / 3 grp from input
+  select line, (row_number() over() - 1) / 3 grp from input
 ), arrays as (
   select array_agg(line) lines from groups group by grp
 ), part2 as (

@@ -17,7 +17,7 @@ copy input (line) from '/aoc/05/input.txt';
 
 with recursive moves_raw as (
   select num, regexp_match(line, '(\d+).*(\d+).*(\d+)')::int[] m
-  from input where regexp_like(line, 'move (\d+) from (\d+) to (\d+)')
+  from input where regexp_like(line, '^move')
 ), moves (move, cnt, src, dest) as (
   select num, m[1], m[2], m[3] from moves_raw
 ), stacks_raw as (
@@ -50,13 +50,12 @@ with recursive moves_raw as (
     from generate_subscripts(crates, 1) as s (i)
   )
   from part2 join moves using (move)
-)
-select (
-  select (
-    select string_agg(right(c, 1), '') from unnest(crates) c
-  ) from part1 order by move desc limit 1
-) "Part 1", (
-  select (
-    select string_agg(right(c, 1), '') from unnest(crates) c
-  ) from part2 order by move desc limit 1
-) "Part 2";
+) select (
+    select (
+      select string_agg(right(c, 1), '') from unnest(crates) c
+    ) from part1 order by move desc limit 1
+  ) "Part 1", (
+    select (
+      select string_agg(right(c, 1), '') from unnest(crates) c
+    ) from part2 order by move desc limit 1
+  ) "Part 2";
