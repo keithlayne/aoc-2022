@@ -29,12 +29,11 @@ with recursive pos (step, x, y) as (
   select step + 1, x + dx, y + dy from pos join deltas using (step)
 ) select *, 1 from pos;
 
-insert into knots
-with recursive pos (step, x, y) as (
-  select 1, 0, 0
-  union
+create type coords as (step int, x int, y int);
+
+create function next_knot(h knots, t coords) returns setof coords as $$
   select
-    step + 1,
+    h.step + 1,
     case
       when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
       when h.y = t.y and h.x = t.x + 2 then t.x + 1
@@ -51,207 +50,69 @@ with recursive pos (step, x, y) as (
       when h.x != t.x and h.y < t.y then t.y - 1
       else t.y
     end
-  from pos t join knots h using (step) where knot = 1
+$$ language sql immutable;
+
+insert into knots
+with recursive pos (step, x, y) as (
+  select 1, 0, 0
+  union
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 1
 ) select *, 2 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 2
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 2
 ) select *, 3 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 3
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 3
 ) select *, 4 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 4
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 4
 ) select *, 5 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 5
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 5
 ) select *, 6 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 6
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 6
 ) select *, 7 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 7
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 7
 ) select *, 8 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 8
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 8
 ) select *, 9 knot from pos;
 
 insert into knots
 with recursive pos (step, x, y) as (
   select 1, 0, 0
   union
-  select
-    step + 1,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.x
-      when h.y = t.y and h.x = t.x + 2 then t.x + 1
-      when h.y = t.y and h.x = t.x - 2 then t.x - 1
-      when h.x > t.x  and h.y != t.y then t.x + 1
-      when h.x < t.x and h.y != t.y then t.x - 1
-      else t.x
-    end,
-    case
-      when abs(h.x - t.x) <= 1 and abs(h.y - t.y) <= 1 then t.y
-      when h.x = t.x and h.y = t.y + 2 then t.y + 1
-      when h.x = t.x and h.y = t.y - 2 then t.y - 1
-      when h.x != t.x and h.y > t.y then t.y + 1
-      when h.x != t.x and h.y < t.y then t.y - 1
-      else t.y
-    end
-  from pos t join knots h using (step) where knot = 9
+  select n.* from pos t join knots h using (step), lateral next_knot(h, row(t.*)) n where knot = 9
 ) select *, 10 knot from pos;
 
 \timing on
