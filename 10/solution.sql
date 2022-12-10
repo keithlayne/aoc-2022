@@ -18,8 +18,8 @@ copy input (line) from '/aoc/10/input.txt';
 with recursive matches (m) as (
   select regexp_match(line, '^\w+( .*)?')::int[] from input
 ), deltas (cycle, delta) as (
-  select row_number() over ()::int, n * coalesce(m[1], 0)
-  from matches, generate_series(0, case when m[1] is null then 0 else 1 end) n
+  select row_number() over ()::int, dx
+  from matches, unnest(case when m[1] is null then array[0] else array[0, m[1]] end) dx
 ), cycles (cycle, x, c, r) as (
   select 1, 1, 0, 0
   union
